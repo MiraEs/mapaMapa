@@ -42,6 +42,57 @@ function init() {
 // });
 
 window.onload = init;
-//testing
+
+
+// Animates the map - zooms in (but we need to connect this to a button)
+function panHome() {
+    view.animate({
+        center: ourLoc,
+        duration: 2000
+    });
+}
+
+// Create a function that will go to a specific location
+// Using another API
+
+function panToLocation() {
+    var countryName = document.getElementById("country-name").value;
+
+    //Error check to make sure the country is spelled correctly
+    if(countryName === "United States") {
+        alert("You didn't enter a country name!");
+        return;
+    }
+    
+
+    //we're accessing a REST API to get the country's 
+    //location data (we customize the query to access the API)
+    var query = "https://restcountries.eu/rest/v2/name/"+countryName;
+    query = query.replace(/ /g, "%20");
+    alert(query);
+
+    // We are now REQUESTING - talking to the server
+    var countryRequest = new XMLHttpRequest();
+    countryRequest.open('GET', query, false);
+
+    // WE have a request, send it to the server 
+    countryRequest.send();
+    
+    // We have to parse object 
+    var countryInformation = JSON.parse(countryRequest.response(Text));
+
+    // After parsing = access location
+    var lat = countryInformation[0].latlng[0];
+    var lon = countryInformation[0].latlng[1];
+    
+
+    var location = ol.proj.fromLonLat([lat, lon]);
+
+    view.animate({
+        center: location,
+        duration: 2000
+    });
+    
+}
 
 
